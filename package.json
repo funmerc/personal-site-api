@@ -1,0 +1,27 @@
+{
+  "name": "personal-site-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "cf-typegen": "wrangler types",
+    "db:new": "wrangler d1 migrations create personal-site-db",
+    "db:migrate:local": "wrangler d1 migrations apply personal-site-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply personal-site-db --remote",
+    "db:status:local": "wrangler d1 migrations list personal-site-db --local",
+    "db:status:remote": "wrangler d1 migrations list personal-site-db --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.16.9",
+    "@types/node": "^25.9.1",
+    "typescript": "^5.5.2",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.94.0"
+  },
+  "dependencies": {
+    "hono": "^4.12.22"
+  }
+}
