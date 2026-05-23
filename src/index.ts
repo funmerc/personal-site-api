@@ -26,6 +26,15 @@ app.use(
   }),
 )
 
+app.use('*', async (ctx, next) => {
+  const ip = ctx.req.header('CF-Connecting-IP') ?? 'unknown'
+  const { success } = await ctx.env.RATE_LIMITER.limit({ key: ip })
+  if (!success) {
+    return ctx.json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' })
+  }
+  return next()
+})
+
 app.get('/', (ctx) => ctx.json({ ok: true }))
 
 app.route('/projects', projects)
