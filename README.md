@@ -13,11 +13,11 @@ Cloudflare Worker (TypeScript + Hono) backing [jasonrice.me](https://jasonrice.m
 | GET | `/recent?limit=N` | Cross-kind feed (default 5, clamped 1–50) |
 | GET | `/about` · `/status` · `/education` · `/work` · `/uses` | Profile singletons |
 
-CORS is locked to `GET` from `https://jasonrice.me` and any `http://localhost:*` / `Lets ` origin.
+CORS is locked to `GET` from `https://jasonrice.me`. Localhost origins (`http://localhost:*` / `http://127.0.0.1:*`) are additionally allowed only in local dev, gated on `ENVIRONMENT === "development"` (set via `.dev.vars`, see [Setup](#setup)); in production they're rejected.
 
 ## Rate limits
 
-Every endpoint is rate-limited to **20 requests per 60 seconds per IP** via Cloudflare's Workers Rate Limit binding (`CF-Connecting-IP` is the key, so each visitor's browser has its own bucket). When the limit is exceeded the API responds:
+Every endpoint is rate-limited to **60 requests per 60 seconds per IP** via Cloudflare's Workers Rate Limit binding (`CF-Connecting-IP` is the key, so each visitor's browser has its own bucket). When the limit is exceeded the API responds:
 
 ```http
 HTTP/1.1 429 Too Many Requests
@@ -48,6 +48,7 @@ npm install
 	"compatibility_flags": ["nodejs_compat"],
 	"observability": { "enabled": true },
 	"upload_source_maps": true,
+	"vars": { "ENVIRONMENT": "production" },
 	"d1_databases": [
 		{
 			"binding": "personal_site_db",
@@ -59,10 +60,16 @@ npm install
 		{
 			"name": "RATE_LIMITER",
 			"namespace_id": "1001",
-			"simple": { "limit": 20, "period": 60 }
+			"simple": { "limit": 60, "period": 60 }
 		}
 	]
 }
+```
+
+Copy the local env template (it sets `ENVIRONMENT="development"`, which enables localhost CORS under `npm run dev`):
+
+```sh
+cp .dev.vars.example .dev.vars
 ```
 
 Then apply migrations to the local D1:

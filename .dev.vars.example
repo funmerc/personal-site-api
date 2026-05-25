@@ -1,0 +1,7 @@
+# Copy to `.dev.vars` for local development (`npm run dev`).
+# `.dev.vars` is gitignored and loaded only by `wrangler dev`; it overrides the
+# `vars` defaults in wrangler.jsonc locally and never ships to production.
+
+# Marks the local dev runtime. Enables localhost CORS origins in src/index.ts.
+# Production uses the wrangler.jsonc default ("production"), which rejects them.
+ENVIRONMENT="development"
